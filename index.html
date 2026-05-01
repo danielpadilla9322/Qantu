@@ -80,26 +80,18 @@ html, body { height:100%; background:var(--bg); color:var(--cream); font-family:
 }
 .student-card.not-started:active { border-color: var(--border); }
 .student-row {
-  display:flex; align-items:center; gap:0; padding:10px 14px;
-}
-.student-row .time-block {
-  padding-right:12px; border-right:1px solid var(--border); margin-right:12px;
+  display:flex; align-items:center; gap:12px; padding:12px 14px;
 }
 .avatar {
-  width:38px; height:38px; border-radius:50%; flex-shrink:0;
+  width:40px; height:40px; border-radius:50%; flex-shrink:0;
   display:flex; align-items:center; justify-content:center;
   font-size:14px; font-weight:700; letter-spacing:-0.02em;
 }
-.time-block {
-  display:flex; flex-direction:column; align-items:flex-end;
-  flex-shrink:0; min-width:58px;
+.meta-time {
+  color:var(--gold); font-weight:600;
 }
-.time-main {
-  font-size:15px; font-weight:700; color:var(--gold);
-  letter-spacing:-0.02em; line-height:1.1;
-}
-.time-end {
-  font-size:11px; color:var(--muted); margin-top:1px;
+.meta-sep {
+  margin:0 3px; color:var(--border);
 }
 .student-info { flex:1; min-width:0; }
 .student-name { font-size:15px; font-weight:600; color:var(--cream); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -676,13 +668,14 @@ function renderList() {
     if (notStarted) {
       card.innerHTML = `
         <div class="student-row">
-          <div class="time-block" style="opacity:0.4">
-            <div class="time-main">${fmtTime(s.time) || '–'}</div>
-            ${s.timeEnd ? `<div class="time-end">${fmtTime(s.timeEnd)}</div>` : ''}
-          </div>
+          <div class="avatar" style="background:${bg};color:${fg};opacity:0.4">${initials(s.name)}</div>
           <div class="student-info">
             <div class="student-name" style="opacity:0.4">${s.name}</div>
-            <div class="student-meta" style="opacity:0.4">Tarifa ${s.tarifa}</div>
+            <div class="student-meta" style="opacity:0.4">
+              <span class="meta-time">${fmtTime(s.time) || '–'}</span>
+              <span class="meta-sep">·</span>
+              Tarifa ${s.tarifa}
+            </div>
           </div>
           <div class="student-right">
             <span class="payment-badge badge-inactive">No iniciado</span>
@@ -699,16 +692,16 @@ function renderList() {
     const classCount = s.exception ? (s.customClasses || 4) : 4;
     const dotsArr = Array.from({length: classCount}, (_,i) => rec.classes[i] || false);
     const discountLabel = {hermano:'2° hermano', instrumento:'2° instrumento', descuento:'Desc. exc.'}[s.studentType] || '';
-    const timeEnd = s.timeEnd ? ' – ' + fmtTime(s.timeEnd) : '';
     card.innerHTML = `
       <div class="student-row">
-        <div class="time-block">
-          <div class="time-main">${fmtTime(s.time) || '–'}</div>
-          ${s.timeEnd ? `<div class="time-end">${fmtTime(s.timeEnd)}</div>` : ''}
-        </div>
+        <div class="avatar" style="background:${bg};color:${fg}">${initials(s.name)}</div>
         <div class="student-info">
           <div class="student-name">${s.name}${s.rental ? '<span class="rental-badge">🎸 alquiler</span>' : ''}</div>
-          <div class="student-meta">${s.grupal ? 'Grupal' : s.exception ? 'Libre · '+s.dest : 'Tarifa '+s.tarifa+(discountLabel ? ' · '+discountLabel : '')+' · '+s.dest}</div>
+          <div class="student-meta">
+            <span class="meta-time">${fmtTime(s.time) || '–'}${s.timeEnd ? ' – '+fmtTime(s.timeEnd) : ''}</span>
+            <span class="meta-sep">·</span>
+            ${s.grupal ? 'Grupal' : s.exception ? 'Libre · '+s.dest : 'Tarifa '+s.tarifa+(discountLabel ? ' · '+discountLabel : '')+' · '+s.dest}
+          </div>
         </div>
         <div class="student-right">
           <div class="classes-dots">
