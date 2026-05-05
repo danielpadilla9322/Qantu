@@ -345,7 +345,6 @@ html, body { height:100%; background:var(--bg); color:var(--cream); font-family:
   <div>
     <div class="app-title" id="app-title" contenteditable="true" spellcheck="false" title="Toca para editar">Escuela Qantu</div>
     <div class="app-subtitle">Control de clases y pagos</div>
-    <div id="sync-status" style="font-size:9px;letter-spacing:0.06em;margin-top:2px;color:var(--muted)">○ conectando…</div>
   </div>
   <div class="header-right">
     <button class="btn-icon-hdr" onclick="openRecup()" title="Recuperaciones" id="recup-btn">📓</button>
@@ -614,73 +613,6 @@ html, body { height:100%; background:var(--bg); color:var(--cream); font-family:
 <div class="toast" id="toast"></div>
 
 <script>
-// ── FIREBASE ──────────────────────────────────────────────────
-const FB_CONFIG = {
-  apiKey: "AIzaSyD9v_Ifun4EzkBnGzQtoNWR62m9dK6yyxk",
-  authDomain: "qantu-5470f.firebaseapp.com",
-  projectId: "qantu-5470f",
-  storageBucket: "qantu-5470f.firebasestorage.app",
-  messagingSenderId: "1071668654049",
-  appId: "1:1071668654049:web:ccd9519adc901a69936ca0"
-};
-
-let db = null;
-
-async function initFirebase() {
-  try {
-    const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
-    const { getFirestore, doc, setDoc, onSnapshot, getDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
-    const app = initializeApp(FB_CONFIG);
-    db = getFirestore(app);
-    const docRef = doc(db, 'qantu', 'main');
-
-    // Listen for realtime changes
-    onSnapshot(docRef, (snap) => {
-      if (snap.exists()) {
-        const remote = snap.data();
-        if (!state._ts || (remote._ts && remote._ts > state._ts)) {
-          state = remote;
-          const now = new Date();
-          currentMonth = state.currentMonth ?? now.getMonth();
-          currentYear  = state.currentYear  ?? now.getFullYear();
-          if (!state.students) state.students = [];
-          if (!state.records)  state.records  = {};
-          localStorage.setItem(KEY, JSON.stringify(state));
-          renderList();
-          updateSync('synced');
-        }
-      }
-    }, () => updateSync('offline'));
-
-    // Push local data if Firestore is empty
-    const snap = await getDoc(docRef);
-    if (!snap.exists()) await pushToFirebase();
-    else updateSync('synced');
-  } catch(e) {
-    console.warn('Firebase unavailable:', e);
-    updateSync('offline');
-  }
-}
-
-async function pushToFirebase() {
-  if (!db) return;
-  try {
-    const { getFirestore, doc, setDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
-    state._ts = Date.now();
-    const docRef = doc(db, 'qantu', 'main');
-    await setDoc(docRef, JSON.parse(JSON.stringify(state)));
-    updateSync('synced');
-  } catch(e) { updateSync('offline'); }
-}
-
-function updateSync(status) {
-  const el = document.getElementById('sync-status');
-  if (!el) return;
-  const map = { synced:['⚡ sincronizado','var(--green)'], saving:['↑ guardando…','var(--gold)'], offline:['○ sin conexión','var(--muted)'] };
-  const [txt, col] = map[status] || map.offline;
-  el.textContent = txt; el.style.color = col;
-}
-
 // ── CONSTANTS ──────────────────────────────────────────────────
 const MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 const MONTHS_SHORT = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
@@ -753,8 +685,6 @@ function save() {
   state.currentMonth = currentMonth;
   state.currentYear  = currentYear;
   localStorage.setItem(KEY, JSON.stringify(state));
-  updateSync('saving');
-  pushToFirebase();
 }
 
 // ── HELPERS ───────────────────────────────────────────────────
@@ -1300,7 +1230,6 @@ function removeRecup(i) { state.recuperaciones.splice(i, 1); save(); renderRecup
 // ── INIT ──────────────────────────────────────────────────────
 loadState();
 renderList();
-initFirebase();
 
 // ── PWA SETUP ─────────────────────────────────────────────────
 (function() {
