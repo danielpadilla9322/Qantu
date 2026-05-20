@@ -279,17 +279,22 @@ html, body { height:100%; background:var(--bg); color:var(--cream); font-family:
 .recup-overlay.open { opacity:1; pointer-events:all; }
 .recup-panel { position:fixed; top:0; right:0; bottom:0; z-index:190; background:var(--bg); border-left:1px solid var(--border); width:min(420px,100vw); overflow-y:auto; transform:translateX(100%); transition:transform 0.3s cubic-bezier(0.32,0.72,0,1); }
 .recup-panel.open { transform:translateX(0); }
-.recup-header { display:flex; align-items:center; justify-content:space-between; padding:16px 18px; border-bottom:1px solid var(--border); position:sticky; top:0; background:var(--bg); z-index:10; }
+.recup-header { display:flex; align-items:center; justify-content:space-between; padding:12px 14px; border-bottom:1px solid var(--border); position:sticky; top:0; background:var(--bg); z-index:10; }
 .recup-title { font-size:17px; font-weight:700; color:var(--cream); }
-.recup-body { padding:14px 16px 80px; }
-.recup-item { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px 14px; margin-bottom:8px; position:relative; }
+.recup-body { padding:10px 12px 70px; }
+.recup-item { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:8px 10px; margin-bottom:6px; position:relative; }
 .recup-item.excepcional { border-color:var(--gold); }
-.recup-item-name { font-size:14px; font-weight:600; color:var(--cream); padding-right:28px; }
-.recup-item-meta { font-size:11px; color:var(--muted); margin-top:3px; }
-.recup-item-motivo { font-size:12px; color:var(--cream); margin-top:6px; opacity:0.8; }
-.recup-badge-exc { display:inline-block; font-size:9px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; padding:2px 6px; border-radius:10px; background:var(--gold-dim); color:var(--gold); margin-left:6px; }
-.recup-remove { position:absolute; top:10px; right:10px; width:22px; height:22px; border-radius:6px; border:none; background:rgba(196,126,106,0.15); color:var(--red); cursor:pointer; font-size:11px; display:flex; align-items:center; justify-content:center; }
-.recup-done-btn { width:100%; padding:9px; border-radius:10px; border:1px solid var(--green); background:var(--green-dim); color:var(--green); font-size:12px; font-weight:600; cursor:pointer; margin-top:6px; font-family:inherit; }
+.recup-item.scheduled { border-color:rgba(196,126,106,0.6); background:rgba(196,126,106,0.07); }
+.recup-item-name { font-size:13px; font-weight:600; color:var(--cream); padding-right:24px; line-height:1.2; }
+.recup-item-meta { font-size:10px; color:var(--muted); margin-top:2px; }
+.recup-item-motivo { font-size:11px; color:var(--cream); opacity:0.7; margin-top:2px; }
+.recup-badge-exc { display:inline-block; font-size:8px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; padding:1px 5px; border-radius:8px; background:var(--gold-dim); color:var(--gold); margin-left:5px; }
+.recup-scheduled-badge { display:inline-block; font-size:8px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; padding:1px 6px; border-radius:8px; background:rgba(196,126,106,0.2); color:#c47e6a; margin-left:5px; }
+.recup-remove { position:absolute; top:8px; right:8px; width:20px; height:20px; border-radius:5px; border:none; background:rgba(196,126,106,0.15); color:var(--red); cursor:pointer; font-size:10px; display:flex; align-items:center; justify-content:center; }
+.recup-done-btn { width:100%; padding:7px; border-radius:8px; border:1px solid var(--green); background:var(--green-dim); color:var(--green); font-size:11px; font-weight:600; cursor:pointer; margin-top:6px; font-family:inherit; }
+.recup-fecha-row { display:flex; align-items:center; gap:6px; margin-top:6px; }
+.recup-fecha-input { flex:1; background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:7px; padding:5px 8px; color:var(--cream); font-size:11px; outline:none; font-family:inherit; }
+.recup-item.scheduled .recup-fecha-input { border-color:rgba(196,126,106,0.4); }
 .recup-add-fab { position:fixed; bottom:24px; right:20px; z-index:195; width:52px; height:52px; border-radius:50%; border:none; background:var(--gold); color:#0e0c09; font-size:22px; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 4px 20px rgba(201,168,76,0.35); }
 .recup-count { display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; border-radius:50%; background:var(--red); color:white; font-size:9px; font-weight:700; margin-left:4px; vertical-align:middle; }
 .student-card.blocked { border-style:dashed; border-color:rgba(122,168,196,0.3); opacity:0.55; }
@@ -347,6 +352,7 @@ html, body { height:100%; background:var(--bg); color:var(--cream); font-family:
     <div class="app-subtitle">Control de clases y pagos</div>
   </div>
   <div class="header-right">
+    <button class="btn-icon-hdr" onclick="exportScheduleImage()" title="Exportar horario">🖼️</button>
     <button class="btn-icon-hdr" onclick="openRecup()" title="Recuperaciones" id="recup-btn">📓</button>
     <button class="btn-icon-hdr" onclick="openAddModal()" title="Nuevo alumno">＋</button>
   </div>
@@ -447,7 +453,7 @@ html, body { height:100%; background:var(--bg); color:var(--cream); font-family:
   <div class="section" id="d-matricula-section">
     <div class="section-title">Matrícula anual</div>
     <div class="toggle-row">
-      <div><div class="toggle-label">Matrícula 2025</div><div class="toggle-sub" id="d-matricula-status">Sin registrar</div></div>
+      <div><div class="toggle-label">Matrícula 2026</div><div class="toggle-sub" id="d-matricula-status">Sin registrar</div></div>
       <button class="toggle-switch off" id="d-matricula-btn" onclick="toggleMatricula()"></button>
     </div>
   </div>
@@ -551,7 +557,7 @@ html, body { height:100%; background:var(--bg); color:var(--cream); font-family:
     </div>
     <div class="form-group" style="margin-bottom:10px">
       <label class="form-label">Fecha de recuperación</label>
-      <input class="form-input" id="rm-fecha" type="date">
+      <input class="form-input" id="rm-fecha" type="datetime-local">
       <div style="font-size:10px;color:var(--muted);margin-top:4px">Si no se completa aparecerá como "No programada"</div>
     </div>
     <div class="toggle-row" style="margin-bottom:4px">
@@ -649,7 +655,7 @@ const DEFAULT_STUDENTS = [
 
 // ── STATE ─────────────────────────────────────────────────────
 let state, currentMonth, currentYear, currentStudentId;
-const KEY = 'qantu-control-v4';
+const KEY = 'qantu-control-v5';
 
 function loadState() {
   try {
@@ -787,18 +793,18 @@ function renderList() {
       <div class="student-row">
         <div class="avatar" style="background:${bg};color:${fg}">${initials(s.name)}</div>
         <div class="student-info">
-          <div class="student-name">${s.name}${s.rental ? '<span class="rental-badge">🎸 alquiler</span>' : ''}</div>
+          <div class="student-name" style="${s.grupal ? 'color:#c8c4b8' : ''}">${s.name}${s.rental ? '<span class="rental-badge">🎸 alquiler</span>' : ''}</div>
           <div class="student-meta">
-            <span class="meta-time">${fmtTime(s.time) || '–'}${s.timeEnd ? ' – '+fmtTime(s.timeEnd) : ''}</span>
+            <span class="meta-time" style="${s.grupal ? 'color:#b8a87a' : ''}">${fmtTime(s.time) || '–'}</span>
             <span class="meta-sep">·</span>
-            ${s.grupal ? 'Grupal' : s.exception ? 'Libre · '+s.dest : 'Tarifa '+s.tarifa+(discountLabel ? ' · '+discountLabel : '')+' · '+s.dest}
+            ${s.grupal ? 'Grupal' : s.exception ? 'Libre' : s.tarifa+(s.dest==='Pago a Qantu'||s.dest==='Yape a secretaría'||s.dest==='Qantu' ? ' · Qantu' : ' · Profesor')}
           </div>
         </div>
         <div class="student-right">
           <div class="classes-dots">
             ${dotsArr.map(d=>`<div class="dot${d?' done':''}"></div>`).join('')}
           </div>
-          <span class="payment-badge ${badgeClass}">${badgeText}</span>
+          ${s.grupal ? '' : `<span class="payment-badge ${badgeClass}">${badgeText}</span>`}
         </div>
       </div>`;
     wrap.appendChild(card);
@@ -1017,8 +1023,9 @@ function toggleRental() {
 
 function applyGrupalUI(isGrupal) {
   document.getElementById('d-stype-section').classList.toggle('section-disabled', isGrupal);
-  document.getElementById('d-payment-section').classList.toggle('section-disabled', isGrupal);
-  document.getElementById('d-dest-section').classList.toggle('section-disabled', isGrupal);
+  // Hide payment and dest entirely for grupal
+  document.getElementById('d-payment-section').style.display = isGrupal ? 'none' : '';
+  document.getElementById('d-dest-section').style.display    = isGrupal ? 'none' : '';
   // Disable rental toggle when grupal is on
   const rentalToggle = document.getElementById('d-rental-toggle');
   if (isGrupal) {
@@ -1153,7 +1160,7 @@ function saveMonthField(field, value) {
 let recupExc = false;
 
 function openRecup() {
-  renderRecup();
+  renderRecup(false);
   document.getElementById('recup-overlay').classList.add('open');
   document.getElementById('recup-panel').classList.add('open');
 }
@@ -1161,27 +1168,76 @@ function closeRecup() {
   document.getElementById('recup-overlay').classList.remove('open');
   document.getElementById('recup-panel').classList.remove('open');
 }
-function renderRecup() {
+function renderRecup(showArchive) {
   if (!state.recuperaciones) state.recuperaciones = [];
+  const pending = state.recuperaciones.filter(r => !r.done);
+  const done    = state.recuperaciones.filter(r =>  r.done);
   const body = document.getElementById('recup-body');
   body.innerHTML = '';
-  const pending = state.recuperaciones.filter(r=>!r.done).length;
-  document.getElementById('recup-btn').innerHTML = pending > 0 ? `📓<span class="recup-count">${pending}</span>` : '📓';
-  if (!state.recuperaciones.length) {
-    body.innerHTML = '<div class="empty">Sin recuperaciones pendientes</div>'; return;
+  document.getElementById('recup-btn').innerHTML = pending.length > 0
+    ? '\u{1F4D3}<span class="recup-count">'+pending.length+'</span>' : '\u{1F4D3}';
+  // Tabs
+  const aS = 'flex:1;padding:7px;border-radius:8px;border:1px solid var(--gold);background:var(--gold-dim);color:var(--gold);font-family:inherit;font-size:12px;font-weight:600;cursor:pointer';
+  const iS = 'flex:1;padding:7px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--muted);font-family:inherit;font-size:12px;font-weight:600;cursor:pointer';
+  const tabs = document.createElement('div');
+  tabs.style.cssText = 'display:flex;gap:8px;margin-bottom:12px';
+  const btn1 = document.createElement('button'); btn1.style.cssText = !showArchive ? aS : iS;
+  btn1.textContent = 'Pendientes (' + pending.length + ')'; btn1.onclick = () => renderRecup(false);
+  const btn2 = document.createElement('button'); btn2.style.cssText = showArchive ? aS : iS;
+  btn2.textContent = 'Realizadas (' + done.length + ')';   btn2.onclick = () => renderRecup(true);
+  tabs.appendChild(btn1); tabs.appendChild(btn2); body.appendChild(tabs);
+  const list = showArchive ? done : pending;
+  if (!list.length) {
+    const e = document.createElement('div'); e.className = 'empty';
+    e.textContent = showArchive ? 'Sin recuperaciones realizadas' : 'Sin recuperaciones pendientes';
+    body.appendChild(e); return;
   }
-  state.recuperaciones.forEach((r, i) => {
+  list.forEach(r => {
+    const i = state.recuperaciones.indexOf(r);
+    const isScheduled = !!r.fecha;
     const item = document.createElement('div');
-    item.className = 'recup-item' + (r.excepcional ? ' excepcional' : '');
-    item.style.opacity = r.done ? '0.5' : '1';
-    item.innerHTML = `
-      <button class="recup-remove" onclick="removeRecup(${i})">✕</button>
-      <div class="recup-item-name">${r.studentName}${r.excepcional ? '<span class="recup-badge-exc">Excepcional</span>' : ''}</div>
-      <div class="recup-item-meta">${MONTHS[r.mes]} · Clase ${r.clase||'–'} · ${r.fecha ? new Date(r.fecha+'T12:00:00').toLocaleDateString('es-PE',{weekday:'short',day:'numeric',month:'short'}) : '<span style="color:var(--red);font-weight:600">No programada</span>'}${r.excDetail ? ' · '+r.excDetail : ''}</div>
-      <div class="recup-item-motivo">${r.motivo}</div>
-      ${!r.done
-        ? `<button class="recup-done-btn" onclick="markRecupDone(${i})">✓ Recuperación realizada</button>`
-        : '<div style="font-size:11px;color:var(--green);margin-top:6px">✓ Realizada</div>'}`;
+    item.className = 'recup-item' + (r.excepcional ? ' excepcional' : '') + (isScheduled ? ' scheduled' : '');
+    item.style.opacity = showArchive ? '0.65' : '1';
+    // Remove button
+    const rmBtn = document.createElement('button');
+    rmBtn.className = 'recup-remove'; rmBtn.textContent = '✕';
+    rmBtn.onclick = () => removeRecup(i);
+    item.appendChild(rmBtn);
+    // Name
+    const nameDiv = document.createElement('div'); nameDiv.className = 'recup-item-name';
+    nameDiv.textContent = r.studentName;
+    if (r.excepcional) { const b=document.createElement('span'); b.className='recup-badge-exc'; b.textContent='Exc.'; nameDiv.appendChild(b); }
+    if (isScheduled)   { const b=document.createElement('span'); b.className='recup-scheduled-badge'; b.textContent='● Agendada'; nameDiv.appendChild(b); }
+    item.appendChild(nameDiv);
+    // Meta
+    const metaDiv = document.createElement('div'); metaDiv.className = 'recup-item-meta';
+    metaDiv.textContent = MONTHS[r.mes] + ' · Clase ' + (r.clase || '–');
+    item.appendChild(metaDiv);
+    // Fecha input
+    const fechaRow = document.createElement('div'); fechaRow.className = 'recup-fecha-row';
+    const fechaInp = document.createElement('input'); fechaInp.type='datetime-local'; fechaInp.className='recup-fecha-input';
+    fechaInp.value = r.fecha || ''; fechaInp.placeholder = 'Fecha y hora';
+    fechaInp.addEventListener('change', e => updateRecupFecha(i, e.target.value));
+    fechaRow.appendChild(fechaInp);
+    if (!r.fecha) { const s=document.createElement('span'); s.style.cssText='font-size:10px;color:var(--red);font-weight:600;white-space:nowrap'; s.textContent='No programada'; fechaRow.appendChild(s); }
+    item.appendChild(fechaRow);
+    // Motivo editable
+    const motivoWrap = document.createElement('div'); motivoWrap.style.marginTop='5px';
+    const motivoInp = document.createElement('input'); motivoInp.type='text'; motivoInp.className='recup-fecha-input';
+    motivoInp.style.width='100%'; motivoInp.value=r.motivo||''; motivoInp.placeholder='Motivo...';
+    motivoInp.addEventListener('change', e => { state.recuperaciones[i].motivo=e.target.value; save(); });
+    motivoWrap.appendChild(motivoInp); item.appendChild(motivoWrap);
+    // Action button
+    const actionBtn = document.createElement('button'); actionBtn.className='recup-done-btn';
+    if (!showArchive) {
+      actionBtn.textContent = '✓ Realizada';
+      actionBtn.onclick = () => markRecupDone(i);
+    } else {
+      actionBtn.style.cssText='border-color:var(--muted);background:transparent;color:var(--muted)';
+      actionBtn.textContent = '↩ Mover a pendientes';
+      actionBtn.onclick = () => unmarkRecupDone(i);
+    }
+    item.appendChild(actionBtn);
     body.appendChild(item);
   });
 }
@@ -1222,10 +1278,164 @@ function confirmRecup() {
     excDetail: document.getElementById('rm-exc-detail').value.trim(),
     done: false, created: Date.now()
   });
-  save(); renderRecup(); closeRecupModal(); showToast('Recuperación agregada');
+  save(); renderRecup(false); closeRecupModal(); showToast('Recuperación agregada');
 }
-function markRecupDone(i) { state.recuperaciones[i].done = true; save(); renderRecup(); }
+function markRecupDone(i)   { state.recuperaciones[i].done = true;  save(); renderRecup(false); }
+function unmarkRecupDone(i) { state.recuperaciones[i].done = false; save(); renderRecup(true);  }
+function updateRecupFecha(i, val) { state.recuperaciones[i].fecha = val; save(); renderRecup(!!state.recuperaciones[i].done); }
 function removeRecup(i) { state.recuperaciones.splice(i, 1); save(); renderRecup(); }
+
+// ── EXPORT SCHEDULE IMAGE ─────────────────────────────────────
+function exportScheduleImage() {
+  const dayOrder = {Lunes:0, Martes:1, 'Miércoles':2, Jueves:3, Viernes:4, Sábado:5};
+  const dayColors = {Lunes:'#c9a84c', Martes:'#7eb8a4', 'Miércoles':'#c47e6a', Jueves:'#7aa8c4', Viernes:'#a47eb8', Sábado:'#b8a47e'};
+
+  // Group active students by day, sorted by time
+  const grouped = {};
+  [...state.students]
+    .sort((a,b) => {
+      const dd = (dayOrder[a.day]??9) - (dayOrder[b.day]??9);
+      return dd !== 0 ? dd : (a.time||'').localeCompare(b.time||'');
+    })
+    .forEach(s => {
+      if (!s.day || s.day === 'Por definir') return;
+      if (!grouped[s.day]) grouped[s.day] = [];
+      grouped[s.day].push(s);
+    });
+
+  const days = Object.keys(grouped);
+  if (!days.length) { showToast('Sin alumnos para exportar'); return; }
+
+  // Canvas dimensions
+  const colW = 220;
+  const padX = 24;
+  const padY = 28;
+  const rowH = 44;
+  const headerH = 52;
+  const dayHeaderH = 36;
+  const footerH = 36;
+  const cols = days.length;
+  const maxRows = Math.max(...days.map(d => grouped[d].length));
+  const W = cols * colW + padX * 2;
+  const H = padY + headerH + dayHeaderH + maxRows * rowH + padY + footerH;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = W * 2;   // retina
+  canvas.height = H * 2;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(2, 2);
+
+  // Background
+  ctx.fillStyle = '#0e0c09';
+  ctx.fillRect(0, 0, W, H);
+
+  // Subtle grid lines
+  ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+  ctx.lineWidth = 1;
+  for (let r = 0; r <= maxRows; r++) {
+    const y = padY + headerH + dayHeaderH + r * rowH;
+    ctx.beginPath(); ctx.moveTo(padX, y); ctx.lineTo(W - padX, y); ctx.stroke();
+  }
+
+  // Header
+  ctx.fillStyle = '#c9a84c';
+  ctx.font = 'bold 11px -apple-system, sans-serif';
+  ctx.letterSpacing = '2px';
+  ctx.fillText('ESCUELA QANTU', padX, padY + 16);
+  ctx.letterSpacing = '0px';
+
+  // Title
+  const titleEl = document.getElementById('app-title');
+  const teacherName = titleEl ? titleEl.textContent.trim() : 'Escuela Qantu';
+  ctx.fillStyle = '#f5eed8';
+  ctx.font = 'bold 22px -apple-system, sans-serif';
+  ctx.fillText('Horario de Clases', padX, padY + 40);
+
+  // Day columns
+  days.forEach((day, di) => {
+    const x = padX + di * colW;
+    const color = dayColors[day] || '#c9a84c';
+
+    // Day accent bar
+    ctx.fillStyle = color;
+    ctx.fillRect(x, padY + headerH, 3, dayHeaderH - 4);
+
+    // Day name
+    ctx.fillStyle = '#f5eed8';
+    ctx.font = 'bold 14px -apple-system, sans-serif';
+    ctx.fillText(day, x + 12, padY + headerH + 22);
+
+    // Student rows
+    grouped[day].forEach((s, ri) => {
+      const y = padY + headerH + dayHeaderH + ri * rowH;
+
+      // Alternating row bg
+      if (ri % 2 === 0) {
+        ctx.fillStyle = 'rgba(255,255,255,0.025)';
+        ctx.beginPath();
+        ctx.roundRect(x + 2, y + 4, colW - 8, rowH - 6, 6);
+        ctx.fill();
+      }
+
+      // Time — start to end
+      ctx.fillStyle = color;
+      ctx.font = 'bold 12px -apple-system, sans-serif';
+      const endTime = (() => {
+        if (s.timeEnd) return fmtTime(s.timeEnd);
+        if (!s.time) return '';
+        const [h,m] = s.time.split(':').map(Number);
+        const dur = s.tarifa==='A' ? 30 : s.tarifa==='B' ? 45 : 60;
+        const tot = h*60 + m + dur;
+        const eh = Math.floor(tot/60), em = tot%60;
+        const ep = eh>=12?'pm':'am', ehh = eh>12?eh-12:eh===0?12:eh;
+        return ehh+':'+String(em).padStart(2,'0')+' '+ep;
+      })();
+      const timeStr = (fmtTime(s.time) || '–') + (endTime ? ' – ' + endTime : '');
+      ctx.fillText(timeStr, x + 10, y + 20);
+
+      // Name
+      ctx.fillStyle = '#f5eed8';
+      ctx.font = '13px -apple-system, sans-serif';
+      // Truncate name if too long
+      let name = s.name;
+      ctx.font = '600 13px -apple-system, sans-serif';
+      while (ctx.measureText(name).width > colW - 22 && name.length > 4) {
+        name = name.slice(0, -1);
+      }
+      if (name !== s.name) name += '…';
+      ctx.fillText(name, x + 10, y + 36);
+    });
+  });
+
+  // Footer
+  const footerY = padY + headerH + dayHeaderH + maxRows * rowH + 20;
+  ctx.fillStyle = 'rgba(255,255,255,0.2)';
+  ctx.font = '10px -apple-system, sans-serif';
+  ctx.fillText(teacherName + ' · ' + new Date().toLocaleDateString('es-PE', {month:'long', year:'numeric'}), padX, footerY);
+
+  // Column separators
+  days.forEach((_, di) => {
+    if (di === 0) return;
+    const x = padX + di * colW;
+    ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x, padY + headerH);
+    ctx.lineTo(x, padY + headerH + dayHeaderH + maxRows * rowH);
+    ctx.stroke();
+  });
+
+  // Export as image
+  canvas.toBlob(blob => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'horario-qantu.png';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('Horario exportado ✓');
+  }, 'image/png');
+}
 
 // ── INIT ──────────────────────────────────────────────────────
 loadState();
